@@ -4,21 +4,18 @@ variable "environment" {
   type        = "string"
 }
 
-variable "s3_bucket_name" {
+variable "region" {
+  default = "ap-south-1"
+}
+
+variable "s3_bucket_prefix" {
   description = "Name of the S3 bucket"
   type        = "string"
 }
 
-variable "s3_tags" {
-  type = "map"
-
-  default {
+locals {
+  s3_tags = {
     created_by  = "terraform"
-    environment = "test"
+    environment = "${var.environment}"
   }
-}
-
-variable "s3_regions" {
-  type    = "list"
-  default = ["ap-south-1", "us-west-2"]
 }

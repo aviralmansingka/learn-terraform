@@ -1,1 +1,3 @@
-s3_bucket_name = "aviralmansingka-test-terraform"
+s3_bucket_prefix = "aviralmansingka-test-terraform"
+
+region = "ap-south-1"

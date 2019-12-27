@@ -3,21 +3,23 @@ resource "aws_subnet" "public" {
   vpc_id                  = "${aws_vpc.main.id}"
   cidr_block              = "${cidrsubnet(var.cidr_block, 8, count.index)}"
   availability_zone       = "${element(var.availability_zones, count.index)}"
-  map_public_ip_on_launch = "true"
+  map_public_ip_on_launch = true
 
-  tags {
+  tags = {
     "Name" = "Public subnet - ${element(var.availability_zones, count.index)}"
   }
 }
 
 resource "aws_subnet" "private" {
-  count                   = "${length(var.availability_zones)}"
-  vpc_id                  = "${aws_vpc.main.id}"
+  count  = "${length(var.availability_zones)}"
+  vpc_id = "${aws_vpc.main.id}"
+
+  # Take into account CIDR blocks allocated to the public subnets
   cidr_block              = "${cidrsubnet(var.cidr_block, 8, count.index + length(var.availability_zones))}"
   availability_zone       = "${element(var.availability_zones, count.index)}"
-  map_public_ip_on_launch = "false"
+  map_public_ip_on_launch = false
 
-  tags {
+  tags = {
     "Name" = "Private subnet - ${element(var.availability_zones, count.index)}"
   }
 }
@@ -32,7 +34,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"
   allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
 
-  tags {
+  tags = {
     "Name" = "NAT - ${element(var.availability_zones, count.index)}"
   }
 }

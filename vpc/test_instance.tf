@@ -16,12 +16,13 @@ resource "aws_launch_configuration" "test" {
 resource "aws_autoscaling_group" "test" {
   name              = "test-asg"
   min_size          = 0
-  desired_capacity  = 1
+  desired_capacity  = 0
   max_size          = 1
   health_check_type = "EC2"
 
   launch_configuration = "${aws_launch_configuration.test.name}"
-  vpc_zone_identifier  = ["${aws_subnet.private.*.id}"]
+
+  vpc_zone_identifier = ["${aws_subnet.private.*.id}"]
 }
 
 resource "aws_security_group" "test" {
@@ -43,12 +44,12 @@ resource "aws_security_group_rule" "allow_all_ssh_test" {
   security_group_id = "${aws_security_group.test.id}"
 }
 
-resource "aws_security_group_rule" "all_all_outbound_test" {
+resource "aws_security_group_rule" "allow_all_outbound_test" {
   type              = "egress"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["${aws_subnet.public.*.cidr_block}"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = "${aws_security_group.test.id}"
 }
 
